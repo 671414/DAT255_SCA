@@ -77,7 +77,7 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
         group.create_dataset("traces", data=scaled_trace_set[group_start_index:group_stop_index, :, :])
         #her er det noe som feiler
         group.create_dataset("key", data=key[:, group_start_index:group_stop_index])
-        print("text", text[group_start_index:group_stop_index])
+        print("text", text[:,group_start_index:group_stop_index])
         group.create_dataset("sub_bytes_in", data=sub_byte_in[:, group_start_index:group_stop_index])
         group.create_dataset("pts", data=text[:, group_start_index:group_stop_index])
         # group.create_dataset("sub_bytes_out", data = sub_byte_out[:, start_index:stop_index])
@@ -145,7 +145,9 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
         for group in f.keys():
             group_name = f[group]
             #henter nøkkelbyten, men dette blir bare det et tall, fra 0 - 255
+            #men det skal være den første byten i nøkkelen
             k = group_name["key"][attack_byte, :num_traces]
+            print(group_name["key"][attack_byte])
             print(k)
             #henter tekstbyten, mens denne blir en lang liste på pts[i]
             pts = group_name["pts"][attack_byte][:num_traces]
@@ -178,4 +180,16 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
 
 def close_file(file_path: str):
     with h5py.File(file_path, "r") as f:
+        f.close()
+
+def inspect_dataset(file_path: str):
+    with h5py.File(file_path, "r") as f:
+        i = 0
+        for group in f.keys():
+            print(group)
+            i += 1
+            print(i)
+            print()
+            for dset in f[group].keys():
+                print(dset)
         f.close()
