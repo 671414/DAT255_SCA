@@ -90,7 +90,7 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
         group.create_dataset("pts", data=text[:, group_start_index:group_stop_index])
         # group.create_dataset("sub_bytes_out", data = sub_byte_out[:, start_index:stop_index])
         #Siden alle radene er like, pga samme nøkkel blir det samme tallet repetert
-        print(key[:, 0])
+        #print(key[:, 0])
         group_start_index += trace_per_key
         group_stop_index += trace_per_key
 
@@ -179,6 +179,8 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
             y = y[:num_traces]
             y = tf.keras.utils.to_categorical(y, 256)
             y = tf.convert_to_tensor(y, dtype="uint8")
+
+
             k_list.append(k)
             pts_list.append(pts)
             x_list.append(x)
