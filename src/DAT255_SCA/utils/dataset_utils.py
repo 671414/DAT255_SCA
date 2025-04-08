@@ -39,50 +39,58 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
 
         #transpose the sets into [byte][data]
         sub_byte_in = np.transpose(sub_byte_in_set, (1, 0))
-        key = np.transpose(key_set, (1, 0))
+        keyt = np.transpose(key_set, (1, 0))
         text = np.transpose(plaintext_set, (1, 0))
         #Skriver ut de 3 første nøklene, greit for feilsøking
-        print(key.shape, text.shape)
-        print("org keys")
-        print(key_set[0])
-        print(key_set[256])
-        print(key_set[512])
-        print("transformed keys")
-        print(key[:,0])
-        print(key[:,256])
-        print(key[:,512])
-        print("transformed text")
+        #print(keyt.shape, text.shape)
+        #print("org keys")
+        #print(key_set[0])
+        #print(key_set[256])
+        #print(key_set[512])
+        #print("transformed keys")
+        #print(keyt[:,0])
+        #print(keyt[:,256])
+        #print(keyt[:,512])
+        #print("org text")
+        #print(plaintext_set[0])
+        #print(plaintext_set[1])
+        #print(plaintext_set[2])
+        #print("transformed text")
         #her er 0 byte 0, 1 byte 1, 2 byte 2 osv..
         #printer alle radene i kolonne 0 som er byte 0 verdien i alle kolonnene
-        print(text[:,0])
-        print(text[:,1])
-        print(text[:,2])
+        #print(text[:,0])
+        #print(text[:,1])
+        #print(text[:,2])
 
 
-
+    #print(keyt)
+    f.close()
     # index to mark start and stop for slicing
     #set num increases if we have to split the dataset into smaller parts. NOT TESTED YET
     group_start_index = 0
-    group_stop_index = trace_per_key
-
+    group_stop_index = 255
+    #noe som feiler her?
     dataset_name = f"{new_set_name}_{set_num}"
     f = h5py.File(f"{dataset_name}.hdf5", "w")
-
+    #hvordan ser key ut siden :, 0 blir 0...255
     # Loop trough the dataset, creating groups for every key
     for i in range(keys):
-        group_name = key_set[group_start_index].tobytes().hex()
+        #print(i)
+        #group_name = key_set[group_start_index].tobytes().hex()
+        group_name = f"{new_set_name}_{i}"
         # Create one group representing a shard
         group = f.create_group(group_name, track_order=True)
 
         group.create_dataset("traces", data=scaled_trace_set[group_start_index:group_stop_index, :, :])
         #her er det noe som feiler
-        group.create_dataset("key", data=key[:, group_start_index:group_stop_index])
-        print("text", text[:,group_start_index:group_stop_index])
+        #forsøker å lagre nøkkelen en gang
+        key = group.create_dataset("key", data=keyt[:, group_start_index:group_stop_index])
+        #print("text", text[:,group_start_index:group_stop_index])
         group.create_dataset("sub_bytes_in", data=sub_byte_in[:, group_start_index:group_stop_index])
         group.create_dataset("pts", data=text[:, group_start_index:group_stop_index])
         # group.create_dataset("sub_bytes_out", data = sub_byte_out[:, start_index:stop_index])
         #Siden alle radene er like, pga samme nøkkel blir det samme tallet repetert
-        print(key[:, group_start_index:group_stop_index])
+        print(key[:, 0])
         group_start_index += trace_per_key
         group_stop_index += trace_per_key
 
@@ -146,12 +154,13 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
             group_name = f[group]
             #henter nøkkelbyten, men dette blir bare det et tall, fra 0 - 255
             #men det skal være den første byten i nøkkelen
-            k = group_name["key"][attack_byte, :num_traces]
-            print(group_name["key"][attack_byte])
-            print(k)
+            #endret slik at nøkkelen bare lagres en gang
+            k = group_name["key"][attack_byte][:num_traces]
+
+            #print(k)
             #henter tekstbyten, mens denne blir en lang liste på pts[i]
             pts = group_name["pts"][attack_byte][:num_traces]
-            print(pts)
+            #print(pts)
 
             x = group_name["traces"][:num_traces, :5000, :]
             x = tf.convert_to_tensor(x, dtype="float32")
@@ -175,7 +184,6 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
             x_list.append(x)
             y_list.append(y)
         f.close()
-    print("done")
     return x_list, y_list, k_list, pts_list
 
 def close_file(file_path: str):
@@ -186,10 +194,27 @@ def inspect_dataset(file_path: str):
     with h5py.File(file_path, "r") as f:
         i = 0
         for group in f.keys():
+            group_name = f[group]
             print(group)
             i += 1
             print(i)
             print()
             for dset in f[group].keys():
                 print(dset)
+            keys = group_name["key"][0][:]
+            print(keys)
+            print()
         f.close()
+
+def new_inspect(filepath: str):
+    data = h5py.File(filepath, 'r')
+    for group in data.keys():
+        print(group)
+        for dset in data[group].keys():
+            print(dset)
+            ds_data = data[group][dset]  # returns HDF5 dataset object
+            print(ds_data)
+            print(ds_data.shape, ds_data.dtype)
+            arr = data[group][dset][:]  # adding [:] returns a numpy array
+            print(arr.shape, arr.dtype)
+            print(arr)
