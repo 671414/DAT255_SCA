@@ -19,7 +19,6 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
         plaintext_set = f['data'][start_index:stop_index, ]
         trace_set = f['trace'][start_index:stop_index, ]
         key_set = f['key'][start_index:stop_index, ]
-        print(plaintext_set.shape, key_set.shape)
 
         #scaling the trace, might want to move this to right before model training
         scaled_trace_set = tf.keras.layers.Rescaling(1. / 127.5, offset=-1)(trace_set)
@@ -41,26 +40,6 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
         sub_byte_in = np.transpose(sub_byte_in_set, (1, 0))
         keyt = np.transpose(key_set, (1, 0))
         text = np.transpose(plaintext_set, (1, 0))
-        #Skriver ut de 3 første nøklene, greit for feilsøking
-        #print(keyt.shape, text.shape)
-        #print("org keys")
-        #print(key_set[0])
-        #print(key_set[256])
-        #print(key_set[512])
-        #print("transformed keys")
-        #print(keyt[:,0])
-        #print(keyt[:,256])
-        #print(keyt[:,512])
-        #print("org text")
-        #print(plaintext_set[0])
-        #print(plaintext_set[1])
-        #print(plaintext_set[2])
-        #print("transformed text")
-        #her er 0 byte 0, 1 byte 1, 2 byte 2 osv..
-        #printer alle radene i kolonne 0 som er byte 0 verdien i alle kolonnene
-        #print(text[:,0])
-        #print(text[:,1])
-        #print(text[:,2])
 
 
     #print(keyt)
@@ -68,7 +47,7 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
     # index to mark start and stop for slicing
     #set num increases if we have to split the dataset into smaller parts. NOT TESTED YET
     group_start_index = 0
-    group_stop_index = 255
+    group_stop_index = trace_per_key
     #noe som feiler her?
     dataset_name = f"{new_set_name}_{set_num}"
     f = h5py.File(f"{dataset_name}.hdf5", "w")
