@@ -42,19 +42,16 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
         text = np.transpose(plaintext_set, (1, 0))
 
 
-    #print(keyt)
     f.close()
     # index to mark start and stop for slicing
     #set num increases if we have to split the dataset into smaller parts. NOT TESTED YET
     group_start_index = 0
     group_stop_index = trace_per_key
-    #noe som feiler her?
     dataset_name = f"{new_set_name}_{set_num}"
     f = h5py.File(f"{dataset_name}.hdf5", "w")
     #hvordan ser key ut siden :, 0 blir 0...255
     # Loop trough the dataset, creating groups for every key
     for i in range(keys):
-        #print(i)
         #group_name = key_set[group_start_index].tobytes().hex()
         group_name = f"{new_set_name}_{i}"
         # Create one group representing a shard
