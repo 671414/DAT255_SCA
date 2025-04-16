@@ -128,8 +128,8 @@ def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_p
     with (h5py.File(f"{dataset_name}", "r")) as f:
         for group in f.keys():
             group_name = f[group]
-            #henter nøkkelbyten, men dette blir bare det et tall, fra 0 - 255
-            #men det skal være den første byten i nøkkelen
+
+
             #endret slik at nøkkelen bare lagres en gang
             k = group_name["key"][attack_byte][:num_traces]
 
@@ -196,3 +196,36 @@ def new_inspect(filepath: str):
             arr = data[group][dset][:]  # adding [:] returns a numpy array
             print(arr.shape, arr.dtype)
             print(arr)
+
+def look_for_duplicate_keys(filepath1: str, filepath2: str):
+    with h5py.File(filepath1, 'r') as data1, h5py.File(filepath2, 'r') as data2:
+        keys1 = []
+        keys2 = []
+
+        for group in data1.keys():
+            group_name = data1[group]
+
+            keys = group_name["key"][:,0]
+            keys1.append(keys)
+
+        for group in data2.keys():
+            group_name = data2[group]
+            keys = group_name["key"][:,0]
+            keys2.append(keys)
+
+
+            common_keys = []
+            for key_list1 in keys1:
+                for key_list2 in keys2:
+
+                    if np.array_equal(key_list1, key_list2):
+                        common_keys.extend(key_list1)
+                        print(key_list1, key_list2)
+                        break
+
+            common_keys = list(set(common_keys))
+
+            return common_keys
+
+
+
