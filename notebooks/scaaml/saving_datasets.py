@@ -14,7 +14,11 @@ from scaaml.utils import get_num_gpu
 from scaaml.utils import tf_cap_memory
 from scaaml.intro.generator import create_dataset
 
-
+"""This is a version of the scaaml.intro.generator.create_dataset function that saves the
+ dataset as a .npz file. We needed to change it a bit, and make it possible to run locally due to
+ errors encounter with the create dataset method in google colab. We only ran this code long enough to 
+ generate sub_bytes_in for byte 0 and the npz files are around 5GB each.
+"""
 
 def save_datasets(config):
     tf_cap_memory()

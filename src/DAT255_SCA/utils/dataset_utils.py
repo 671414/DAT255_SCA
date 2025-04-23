@@ -1,6 +1,22 @@
 import h5py as h5py
 import tensorflow as tf
 import numpy as np
+
+
+"""This module provides functionalities for creating, managing, inspecting, and processing HDF5 datasets, specifically designed to handle datasets
+ containing cryptographic traces, keys, plaintexts, and processed attack points. It uses libraries like `h5py` for HDF5 file manipulation,
+  `tensorflow` for data scaling and tensor conversion, and `numpy` for numerical operations.
+"""
+
+"""Creates and writes a new HDF5 dataset based on raw cryptographic trace data, plaintexts, and keys. For each unique key,
+ a group is created, and the corresponding scaled trace data, processed attack points, plaintexts, and keys are stored.
+ 
+**Parameters:**
+- `file_path` (str): Path to the input HDF5 file containing the raw data.
+- `keys` (int): Number of unique cryptographic keys.
+- `trace_per_key` (int): Number of traces recorded per key.
+- `new_set_name` (str): Name prefix for the generated dataset files.
+"""
 def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: str ):
     #creating a file in the filepath where the set is stored, with unique name
     file_path = file_path
@@ -73,12 +89,30 @@ def create_dataset(file_path: str, keys: int, trace_per_key: int, new_set_name: 
     set_num += 1
     f.close()
 
-#This part of the code is heavily inspired, and some parts borrowed from scaaml.
-#We have done the necesary changes to make it work with our datasets
-#referance will be provided.
 
 
 
+"""THIS MEHTOD HAS NOT BEEN USED OR TESTED PROPERLY. Loads and processes trace and label data from an HDF5 dataset to prepare it for training machine learning models.
+
+**Parameters:**
+- `filepath` (str): Path to the HDF5 dataset file.
+- `attack_point` (str): Type of attack point to target (`sub_bytes_in`, `key`, etc.).
+- `attack_byte` (int): Byte index being used for the attack.
+- `num_traces` (int): Total number of traces to process.
+- `num_traces_per_key` (int): Number of traces extracted per key.
+- `shuffle` (bool): Whether to shuffle the dataset. Defaults to `False`
+
+**Return Values:**
+- `x_train`: Tensor containing scaled traces for model training.
+- `y_train`: Tensor containing one-hot encoded labels.
+
+**Functionality:**
+- Reads trace data and attack points from the HDF5 file.
+- Converts traces into TensorFlow tensors.
+- Encodes target labels using one-hot encoding with 256 categories (byte values).
+- Returns the training features and labels for use in neural network training.
+
+"""
 def load_and_prepare_dataset_for_training(filepath: str, attack_point: str, attack_byte, num_traces, num_traces_per_key, shuffle: bool = False):
     dataset_name = filepath
     attack_point = attack_point
@@ -111,10 +145,27 @@ def load_and_prepare_dataset_for_training(filepath: str, attack_point: str, atta
     f.close()
     return x_train, y_train
 
-#For our use casae i think returning a list with all the necessary information is better than a new dataset
-#will contain data from the specified amount of traces, and all or specified amount of shard
-#must be iterable so that shard 1 is stored i index 0etc, must be easy to understand
-#må se på ferdigprossesert datasett, med sub bytes inn, eller gjøre det selv...
+
+"""Prepares a dataset for evaluation by extracting the relevant traces, keys, plaintexts, and labels for specified attack points.
+
+**Parameters:**
+- `filepath` (str): Path to the HDF5 dataset file.
+- `attack_byte` (int): Byte index being targeted in the evaluation.
+- `attack_point` (str): Attack point to evaluate (`sub_bytes_in`, `sub_bytes_out`, or `key`).
+- `num_traces` (int): Total number of traces to process.
+
+**Return Values:**
+- `x_list`: List of feature tensors (scaled traces).
+- `y_list`: List of one-hot encoded label tensors.
+- `k_list`: List of key values for each trace group.
+- `pts_list`: List of plaintext data for each trace group.
+
+**Functionality:**
+- Reads all groups in the dataset and extracts traces, attack points (labels), and other relevant data.
+- Converts traces and labels into tensors for evaluation.
+- Supports multiple groups in the file and organizes data into separate lists for easy use.
+"""
+
 def load_and_prepare_dataset_for_evaluation(filepath: str, attack_byte, attack_point, num_traces):
     dataset_name = filepath
     
@@ -168,7 +219,7 @@ def close_file(file_path: str):
     with h5py.File(file_path, "r") as f:
         f.close()
 
-def inspect_dataset(file_path: str):
+"""def inspect_dataset(file_path: str):
     with h5py.File(file_path, "r") as f:
         i = 0
         for group in f.keys():
@@ -182,8 +233,17 @@ def inspect_dataset(file_path: str):
             keys = group_name["key"][0][:]
             print(keys)
             print()
-        f.close()
+        f.close()"""
 
+"""Provides a deeper inspection of an HDF5 file, printing metadata for all datasets, including their shapes, data types, and values.
+
+**Parameters:**
+- `filepath` (str): Path to the HDF5 file for inspection.
+
+**Functionality:**
+- Iterates over all groups and datasets in the file.
+- Prints detailed information, including dataset dimensions and raw data values.
+"""
 def new_inspect(filepath: str):
     data = h5py.File(filepath, 'r')
     for group in data.keys():
@@ -197,6 +257,20 @@ def new_inspect(filepath: str):
             print(arr.shape, arr.dtype)
             print(arr)
 
+"""Compares the keys stored in two different HDF5 files and identifies duplicate keys between them.
+
+**Parameters:**
+- `filepath1` (str): Path to the first HDF5 dataset file.
+- `filepath2` (str): Path to the second HDF5 dataset file.
+
+**Return Values:**
+- A list of keys that are common in both files.
+
+**Functionality:**
+- Extracts keys from all groups in both files.
+- Uses NumPy to compare keys for equivalence and identifies duplicates.
+- Returns the list of duplicate keys, if found.
+"""
 def look_for_duplicate_keys(filepath1: str, filepath2: str):
     with h5py.File(filepath1, 'r') as data1, h5py.File(filepath2, 'r') as data2:
         keys1 = []
