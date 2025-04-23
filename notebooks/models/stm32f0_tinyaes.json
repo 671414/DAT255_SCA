@@ -1,0 +1,33 @@
+{
+    "model": "cnn",
+    "device": "stm32f0",
+    "algorithm": "tinyaes",
+    "version": "1",
+    "attack_points": [
+        "sub_bytes_in"
+    ],
+    "attack_bytes": [
+        "0"
+    ],
+    "max_trace_len": 5000,
+    "num_shards": 256,
+    "num_traces_per_shard": 256,
+    "batch_size": 32,
+    "epochs": 30,
+    "optimizer_parameters": {
+        "lr": 0.00010283965194405868,
+        "multi_gpu_lr": null
+    },
+    "model_parameters": {
+        "activation": "tanh",
+        "initial_filters": 8,
+        "initial_pool_size": 2,
+        "block_kernel_size": 13,
+        "blocks_stack1": 6,
+        "blocks_stack2": 2,
+        "blocks_stack3": 5,
+        "blocks_stack4": 6,
+        "dense_dropout": 0.45,
+        "use_pooling": false
+    }
+}
