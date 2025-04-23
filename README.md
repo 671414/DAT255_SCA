@@ -23,3 +23,19 @@ howpublished = {\url{https://elie.net/talk/a-hackerguide-to-deep-learning-based-
 year={2019},
 editor={DEF CON}
 }
+
+How to recreate our results: 
+
+Project structure:
+
+Our project mostly consist of multiple jupyter notebooks. These provide easy documentation and demo ability and are suitable to demonstrate our project.
+
+First you need datasets, we will provide training, testing and validation data. These will be in their first raw format, and also in their ready to train format.
+
+Recreating baseline model:
+
+Recreating our model:
+
+Use keras tuner and training in colab...
+
+
