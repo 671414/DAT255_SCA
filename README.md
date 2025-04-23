@@ -9,12 +9,12 @@ Our task is to build upon already existing deep learning models, and train it on
 
 Our project recovering a key-byte from a tiny-AES encrypted power trace.
 
-We will use our own data, that we collect chipwhisperer. We have already gathered two datasets with 1 000 000 traces.
+We will use our own data, that we collect using chipwhisperer Nano. We have already gathered two datasets with 1 000 000 traces.
 Our contingency plan is to use datasets from this library https://github.com/google/scaaml/blob/main/scaaml_intro/README.md
 
 We are planning to use Resnet v2
 
-Vettafaen hvor denne skal 
+Troughout this project we utilize the scaaml library directly, and trough modification and borrowing concepts. We will refer to where in the library, and when we used the specific parts.
 @inproceedings{burszteindc27,
 title={A Hacker Guide To Deep Learning Based Side Channel Attacks},
 author={Elie Bursztein and Jean-Michel Picod},
