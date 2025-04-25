@@ -107,10 +107,8 @@ Based on the original SCAAML recovery notebook, with minor changes.
 
 Dataset link: [SCAAML Intro Dataset](https://github.com/google/scaaml/tree/main/scaaml_intro)
 
-📚 Reference
-bibtex
-Kopier
-Rediger
+📚 Reference to scaaml talk
+
 @inproceedings{burszteindc27,
   title={A Hacker Guide To Deep Learning Based Side Channel Attacks},
   author={Elie Bursztein and Jean-Michel Picod},
@@ -119,5 +117,7 @@ Rediger
   year={2019},
   editor={DEF CON}
 }
+
+
 🙋‍♂️ Contributors
 This project was completed as part of a group project in the DAT255 Deep Learning Engineering course.
