@@ -272,34 +272,79 @@ def new_inspect(filepath: str):
 - Returns the list of duplicate keys, if found.
 """
 def look_for_duplicate_keys(filepath1: str, filepath2: str):
-    with h5py.File(filepath1, 'r') as data1, h5py.File(filepath2, 'r') as data2:
+    def extract_keys(filepath):
+        keys = []
+        with h5py.File(filepath, 'r') as data:
+            for group in data.keys():
+                group_name = data[group]
+                if "key" in group_name:  # Sjekk at "key" finnes
+                    keys.extend(group_name["key"][:, 0])  # Forutsetter at "key" er 2D
+        return keys
+
+    # Ekstraher nøkler fra begge filer
+    keys1 = extract_keys(filepath1)
+    keys2 = extract_keys(filepath2)
+
+    # Finn overlappende nøkler (sett-operasjon for rask sammenligning)
+    common_keys = list(set(keys1) & set(keys2))
+
+    return common_keys
+
+"""
+Compares the keys stored in two different HDF5 files and identifies duplicate keys between them.
+
+**Parameters:**
+- `data1` (str): Path to the first HDF5 dataset file.
+- `data2` (str): Path to the second HDF5 dataset file.
+
+**Return Values:**
+- A list of keys that are common in both files.
+
+**Functionality:**
+- Opens both HDF5 files using `h5py`.
+- Iterates through all groups in the datasets to extract keys.
+- Keys are extracted as 16-byte values (assumed to be stored in a "key" dataset).
+- Converts key collections into sets and performs a set intersection to find duplicates.
+- Prints the number of common keys found and each duplicate key.
+- Returns a list of common keys.
+
+**Example:**
+```python
+dup_keys = find_duplicate_keys("file1.h5", "file2.h5")
+print(dup_keys)
+```
+"""
+
+def find_duplicate_keys(data1, data2):
+    with h5py.File(data1, 'r') as data1, h5py.File(data2, 'r') as data2:
+
         keys1 = []
         keys2 = []
 
+        # Extract keys from data1
         for group in data1.keys():
             group_name = data1[group]
+            keys = group_name["key"][:, 0]  # Extract 16-byte keys
+            keys1.append(tuple(keys))  # Convert to tuple for hashing
 
-            keys = group_name["key"][:,0]
-            keys1.append(keys)
-
+        # Extract keys from data2
         for group in data2.keys():
             group_name = data2[group]
-            keys = group_name["key"][:,0]
-            keys2.append(keys)
+            keys = group_name["key"][:, 0]  # Extract 16-byte keys
+            keys2.append(tuple(keys))  # Convert to tuple for hashing
 
+        # Convert to sets for comparison
+        set_keys1 = set(keys1)
+        set_keys2 = set(keys2)
 
-            common_keys = []
-            for key_list1 in keys1:
-                for key_list2 in keys2:
+        # Find common keys using set intersection
+        common_keys = set_keys1 & set_keys2
 
-                    if np.array_equal(key_list1, key_list2):
-                        common_keys.extend(key_list1)
-                        print(key_list1, key_list2)
-                        break
+        if common_keys:
+            print(f"Common keys found: {len(common_keys)}")
+            for key in common_keys:
+                print(key)
+        else:
+            print("No common keys found.")
 
-            common_keys = list(set(common_keys))
-
-            return common_keys
-
-
-
+        return list(common_keys)
