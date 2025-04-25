@@ -39,6 +39,8 @@ Processed datasets (1.2GB each) — ready for training, validation, and testing,
 
 Models and configurations:
 
+The models are in the github project, and also added in the data folder togheter with the history object from training.
+
 Our models were trained on a STM32F0 target board.
 
 v0 model: SCAAML hyperparameters (for STM32F415)
