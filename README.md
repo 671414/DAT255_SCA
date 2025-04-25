@@ -7,6 +7,8 @@ Our goal is to recover a single key byte from Tiny-AES encrypted power traces us
 
 We collected datasets on two ChipWhisperers — one for training/testing data, and one for proper unseen holdout data. All necessary data, except full scaaml datasets are available here: https://huggingface.co/datasets/KasparER/DAT255_SCA/tree/main. 
 
+Note: CW1 and 2 refers to the chipwhisperer Nano we used to gather the data. CW2 was used for training, testing and one validation set, and CW1 was used for one validation set and is used to see how the model generalizes across microchips.
+
 📦 Project Structure
 This project mainly consists of Jupyter notebooks, chosen for their ease of documentation, demonstration, and experimentation.
 
