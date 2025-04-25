@@ -25,6 +25,9 @@ We experienced import issues, mostly resolved by importing from keras directly i
 ⚠️ Issues with scaaml imports?
 A quick fix is to copy the necessary functions directly into the notebook, instead of importing them.
 
+⚠️ Issues with scaaml imports?
+We expect there to be some issues with file naming, and pathways in these notebooks. As long as the files are avaiable to the notebook it should run as long as you change the filepath and match the names.
+
 📁 Dataset
 We provide:
 
@@ -98,7 +101,7 @@ Requires access to the full SCAAML dataset.
 
 Based on the original SCAAML recovery notebook, with minor changes.
 
-Dataset link: SCAAML Intro Dataset
+Dataset link: [SCAAML Intro Dataset](https://github.com/google/scaaml/tree/main/scaaml_intro)
 
 📚 Reference
 bibtex
