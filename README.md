@@ -1,6 +1,8 @@
 🔐 Deep Learning-Based Key Byte Recovery from Tiny-AES Encrypted Power Traces
 This project was completed as part of the DAT255 Deep Learning Engineering course at the Western Norway University of Applied Sciences (HVL).
 
+If you havy issues running the notebooks, feel free to create a pull request and we will try to resolve the issue as fast as possible.
+
 Our goal is to recover a single key byte from Tiny-AES encrypted power traces using deep learning. We build upon models from SCAAML and train them on our own datasets, collected using the ChipWhisperer Nano.
 
 We collected datasets on two ChipWhisperers — one for training/testing data, and one for proper unseen holdout data. All necessary data, except full scaaml datasets are available here: https://huggingface.co/datasets/KasparER/DAT255_SCA/tree/main. 
